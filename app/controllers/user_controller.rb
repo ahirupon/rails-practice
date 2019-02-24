@@ -1,4 +1,3 @@
 class UserController < ApplicationController
-  def new
-  end
+  def new; end
 end
