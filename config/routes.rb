@@ -2,7 +2,12 @@ Rails.application.routes.draw do
   get '/about', to: 'static_pages#about'
   get '/help', to: 'static_pages#help'
   get '/contact', to: 'static_pages#contact'
-  get '/signup', to: 'user#new'
+  get '/signup', to: 'users#new'
+  # /signup を　post で受けたら　user#createを返すことにより/usersになることを防止
+  post '/signup', to: 'users#create'
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'static_pages#home'
+  # usersテーブル
+  resources :users
 end

@@ -9,13 +9,11 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX },
                     # 文字の大小関係ないよ(ununiquenessはtrue)rails generate migration add_index_to_users_email
                     uniqueness: { case_sensitive: false }
-                    # セキュアにハッシュ化したパスワードをデータベースのpassword_digest属性に保存できる。
-                    # 二つの仮想的な属性(passwordとpassword_confirmation)が使えるようになる、また存在性と値が一致するかどうかの
-                    # バリデーションも追加される。
-                    # authenticateメゾットが使えるようになる(引数の文字列がパスワードと一致するとUserオブジェクトを、そうでないとfalseを返す。)
+  # セキュアにハッシュ化したパスワードをデータベースのpassword_digest属性に保存できる。
+  # 二つの仮想的な属性(passwordとpassword_confirmation)が使えるようになる、また存在性と値が一致するかどうかの
+  # バリデーションも追加される。
+  # authenticateメゾットが使えるようになる(引数の文字列がパスワードと一致するとUserオブジェクトを、そうでないとfalseを返す。)
   has_secure_password
-# 　パスワードの文字制限
-  validates :password, presence: true, length: {minimum: 6}
+  # 　パスワードの文字制限
+  validates :password, presence: true, length: { minimum: 6 }
 end
-
-
