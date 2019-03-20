@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  attr_accessor :remember_token
   #   データベースに登録する前にemailを文字の大小関わらず区別するために強制的にdowncaseする
   before_save { email.downcase! } # = self.email = email.downcase
   # name属性を検索するため
@@ -23,4 +24,26 @@ class User < ApplicationRecord
                                                   BCrypt::Engine.cost
     BCrypt::Password.create(string, cost: cost)
   end
+
+  # ランダムなトークンを返す
+  def self.new_token
+    SecureRandom.urlsafe_base64
+  end
+
+  # 永続セッションのためにユーザーをデータベースに記憶する
+  def remember
+    self.remember_token = User.new_token
+    update_attribute(:remember_digest, User.digest(remember_token))
+  end
+
+  # 渡されたトークンがダイジェストと一致したらtrueを返す
+  def authenticated?(remember_token)
+    return false if remember_digest.nil?
+
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)
+  end
+
+  def forget
+    update_attribute(:remember_digest, nil)
+   end
 end
