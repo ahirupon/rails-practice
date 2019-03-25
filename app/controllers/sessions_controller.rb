@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
       # ユーザーログイン後にユーザー情報のページにリダイレクトする
       log_in @user
       params[:session][:remember_me] == '1' ? remember(@user) : forget(@user) # チェックボックスに入れると1、ないと0。
-      redirect_to @user # = user_url(user)
+      redirect_back_or(@user) # !!!!!!!
     else
       # エラーメッセージを作成
       # flash[:danger]で設定したメッセージは自動的に表示されます。 .nowでその後のリクエストが発生したら消去される

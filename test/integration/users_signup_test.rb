@@ -19,7 +19,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
       assert_select 'li', 'Password is too short (minimum is 6 characters)'
     end
     # signup_pathにpostされているかurlからテスト
-    assert_select 'form[action="/signup"]'
+    # assert_select "form[action='/signup']"
   end
 
   test 'valid signup information' do
