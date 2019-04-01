@@ -4,11 +4,12 @@ class UsersController < ApplicationController
   before_action :correct_user,   only: %i[edit update]
   before_action :admin_user,     only: :destroy
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
   def show
     @user = User.find(params[:id])
+    redirect_to root_url and return unless @user.activated?
     # よくわからないことがあったらdebuggerで調べてみる
     # debugger
   end
@@ -24,9 +25,10 @@ class UsersController < ApplicationController
     # @user = User.new(name: "Foo Bar", email: "foo@invalid",
     #             password: "foo", password_confirmation: "bar")
     if @user.save
-      log_in @user
-      flash[:success] = 'Welcome to Sample App!!'
-      redirect_to @user # = redirect_to user_url(@user)
+      @user.send_activation_email
+      UserMailer.account_activation(@user).deliver_now
+      flash[:info] = 'Please check your email to activate your account.'
+      redirect_to root_url
     else
       # /newにリダイレクト
       render 'new'
@@ -36,7 +38,7 @@ class UsersController < ApplicationController
   def edit; end
 
   def update
-    if @user.update_attributes(user_params)
+    if @user.update(user_params)
       # 更新に成功した場合を扱う
       flash[:success] = 'profile updated'
       redirect_to @user
@@ -74,33 +76,30 @@ class UsersController < ApplicationController
 
   private
 
-    def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation)
+  def user_params
+    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+  end
+
+  # beforeアクション
+
+  # beforeフィルター
+  # ログイン済みユーザーかどうか確認
+  def logged_in_user
+    unless logged_in?
+      store_location
+      flash[:danger] = 'Please log in.'
+      redirect_to login_url
     end
+  end
 
-    # beforeアクション
+  # 管理者かどうか確認
+  def admin_user
+    redirect_to(root_url) unless current_user.try(:admin?)
+  end
 
-
-   #beforeフィルター
-    #ログイン済みユーザーかどうか確認
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "Please log in."
-        redirect_to login_url
-      end
-    end 
-    # 管理者かどうか確認
-    def admin_user
-      redirect_to(root_url) unless current_user.try(:admin?)
-    end
-
-   # 正しいユーザーかどうか確認
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
-    end
-
-    
-  
+  # 正しいユーザーかどうか確認
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to(root_url) unless current_user?(@user)
+  end
 end
