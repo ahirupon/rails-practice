@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    redirect_to root_url and return unless @user.activated?
+    redirect_to(root_url) && return unless @user.activated?
     # よくわからないことがあったらdebuggerで調べてみる
     # debugger
   end
@@ -20,17 +20,12 @@ class UsersController < ApplicationController
   end
 
   def create
-    # debugger
     @user = User.new(user_params)
-    # @user = User.new(name: "Foo Bar", email: "foo@invalid",
-    #             password: "foo", password_confirmation: "bar")
     if @user.save
       @user.send_activation_email
-      UserMailer.account_activation(@user).deliver_now
       flash[:info] = 'Please check your email to activate your account.'
       redirect_to root_url
     else
-      # /newにリダイレクト
       render 'new'
     end
   end
