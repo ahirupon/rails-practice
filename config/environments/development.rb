@@ -54,6 +54,6 @@ Rails.application.configure do
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :test
-  host = '4e8860d04a8b4ed1b3faa7d220ad8608.vfs.cloud9.us-east-2.amazonaws.com'
+  host = '4e8860d04a8b4ed1b3faa7d220ad8608.vfs.cloud9.us-east-2'
   config.action_mailer.default_url_options = { host: host, protocol: 'https' }
 end
