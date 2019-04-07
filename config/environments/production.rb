@@ -15,6 +15,7 @@ config.action_mailer.raise_delivery_errors = true
     :enable_starttls_auto => true
   }
   # Code is not reloaded between requests.
+  
   config.cache_classes = true
 
   # Eager load code on boot. This eager loads most of Rails and
